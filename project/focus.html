@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MindWink Focus</title>
+  <link rel="stylesheet" href="styles/styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <figure>
+        <img src="images/logo.webp" alt="MindWink Academy Logo" width="50" height="50">
+        <figcaption>MindWink Academy</figcaption>
+      </figure>
+    </div>
+    <button id="menu-toggle" aria-label="Toggle Navigation">&#9776;</button>
+    <nav id="main-nav">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="strategies.html">Strategies</a></li>
+        <li><a href="form.html">Sign Up</a></li>
+        <li><a href="focus.html" class="active">Focus</a></li>
+      </ul>
+    </nav>
+  </header>
+  <section class="focus-title">
+    <h1>MindWink: Today's Focus</h1>
+    <p>How do your actions shape your feelings?</p>
+  </section>
+  </header>
+  <main>
+
+
+    <!-- Add Action Form -->
+    <section id="add-action">
+      <h2>Add an Action</h2>
+      <label for="action-text">What did you do?</label>
+      <input type="text" id="action-text" placeholder="I made my bed">
+
+      <label for="before-mood">How did you feel before?</label>
+      <select id="before-mood">
+        <option value="1">😢</option>
+        <option value="2">😐</option>
+        <option value="3">🙂</option>
+        <option value="4">😊</option>
+        <option value="5">🌟</option>
+      </select>
+
+      <label for="after-mood">How did you feel after?</label>
+      <select id="after-mood">
+        <option value="1">😢</option>
+        <option value="2">😐</option>
+        <option value="3">🙂</option>
+        <option value="4">😊</option>
+        <option value="5">🌟</option>
+      </select>
+
+      <button id="save-action">Save Action</button>
+    </section>
+
+    <!-- Daily Action Log -->
+    <section id="action-log">
+      <h2>Today's Actions</h2>
+      <ul id="actions-list">
+        <!-- Actions will be listed here -->
+      </ul>
+    </section>
+
+    <!-- Mood Tracker -->
+    <section id="mood-tracker">
+      <h2>Mood Tracker</h2>
+      <canvas id="moodChart" width="400" height="180" style="background:#eaf6f9; border-radius:10px;"></canvas>
+    </section>
+
+    <!-- Reflection Prompt -->
+    <section id="reflection">
+      <h2>Reflection</h2>
+      <label for="reflection-input">How did your actions make you feel today?</label>
+      <textarea id="reflection-input" rows="3" placeholder="Type or pick an emoji..."></textarea>
+      <button id="submit-reflection">Submit Reflection</button>
+    </section>
+
+    <!-- Growth Patterns -->
+    <section id="growth-insights">
+      <h2>Growth Insights</h2>
+      <div id="insights-content">
+        <!-- Insights about mood and actions will appear here -->
+      </div>
+    </section>
+
+    <!-- Encouragement -->
+    <section id="encouragement">
+      <h2>Encouragement</h2>
+      <p id="encouragement-message">You're doing great! Keep going!</p>
+    </section>
+
+    <!-- Guardian/Educator Note (optional) -->
+    <section id="guardian-note">
+      <h2>Note from Your Grown-Up</h2>
+      <textarea id="guardian-input" rows="2" placeholder="A kind note or encouragement..."></textarea>
+      <button id="save-guardian-note">Save Note</button>
+    </section>
+
+    <!-- Privacy & Reset -->
+    <section id="privacy-reset">
+      <button id="reset-day">Clear Today's Log</button>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+  <script>
+        // --- Firebase Config ---
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyD7ZPOstOoUT4O2wVnjmDow9zbUQdP6-po",
+          authDomain: "mindwink-62f8b.firebaseapp.com",
+          projectId: "mindwink-62f8b",
+          storageBucket: "mindwink-62f8b.firebasestorage.app",
+          messagingSenderId: "711566883360",
+          appId: "1:711566883360:web:5fed80779e5a11df789a45",
+          measurementId: "G-0S4NSGB8TB"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Wait for authentication before accessing Firestore
+        auth.onAuthStateChanged(user => {
+          if (!user) {
+            // Sign in anonymously if not signed in
+            auth.signInAnonymously();
+            return;
+          }
+          const uid = user.uid;
+          const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+          const actionsCol = db.collection('days').doc(uid).collection(today).doc('data').collection('actions');
+          const reflectionDoc = db.collection('days').doc(uid).collection(today).doc('data');
+
+          // State for editing
+          let editingId = null;
+
+          // Save Action (Create or Update)
+          document.getElementById('save-action').onclick = async function() {
+            const actionText = document.getElementById('action-text').value;
+            const beforeMood = parseInt(document.getElementById('before-mood').value);
+            const afterMood = parseInt(document.getElementById('after-mood').value);
+            if (!actionText) return alert('Please enter an action.');
+            if (editingId) {
+              // Update existing action
+              await actionsCol.doc(editingId).update({ action: actionText, before: beforeMood, after: afterMood });
+              editingId = null;
+              document.getElementById('save-action').textContent = 'Save Action';
+            } else {
+              // Create new action
+              await actionsCol.add({ action: actionText, before: beforeMood, after: afterMood, ts: Date.now() });
+            }
+            document.getElementById('action-text').value = '';
+            loadActions();
+          };
+
+          // Load Actions
+          async function loadActions() {
+            const list = document.getElementById('actions-list');
+            list.innerHTML = '';
+            const snap = await actionsCol.orderBy('ts').get();
+            let labels = [], beforeData = [], afterData = [];
+            snap.forEach(doc => {
+              const d = doc.data();
+              labels.push(d.action);
+              beforeData.push(d.before);
+              afterData.push(d.after);
+              const li = document.createElement('li');
+              li.textContent = `${d.action} (Before: ${d.before}, After: ${d.after})`;
+              // Edit button
+              const editBtn = document.createElement('button');
+              editBtn.textContent = 'Edit';
+              editBtn.onclick = () => {
+                document.getElementById('action-text').value = d.action;
+                document.getElementById('before-mood').value = d.before;
+                document.getElementById('after-mood').value = d.after;
+                editingId = doc.id;
+                document.getElementById('save-action').textContent = 'Update Action';
+              };
+              li.appendChild(editBtn);
+              // Delete button
+              const delBtn = document.createElement('button');
+              delBtn.textContent = 'Delete';
+              delBtn.onclick = async () => {
+                await actionsCol.doc(doc.id).delete();
+                // If deleting the one being edited, reset form
+                if (editingId === doc.id) {
+                  editingId = null;
+                  document.getElementById('action-text').value = '';
+                  document.getElementById('save-action').textContent = 'Save Action';
+                }
+                loadActions();
+              };
+              li.appendChild(delBtn);
+              list.appendChild(li);
+            });
+            updateMoodChart(labels, beforeData, afterData);
+          }
+
+          // Reflection CRUD
+          document.getElementById('submit-reflection').onclick = async function() {
+            const reflection = document.getElementById('reflection-input').value;
+            await reflectionDoc.set({ reflection }, { merge: true });
+            loadReflection();
+          };
+          async function loadReflection() {
+            const doc = await reflectionDoc.get();
+            document.getElementById('reflection-input').value = doc.exists && doc.data().reflection ? doc.data().reflection : '';
+          }
+
+          // Guardian Note CRUD
+          document.getElementById('save-guardian-note').onclick = async function() {
+            const note = document.getElementById('guardian-input').value;
+            await reflectionDoc.set({ guardianNote: note }, { merge: true });
+            loadGuardianNote();
+          };
+          async function loadGuardianNote() {
+            const doc = await reflectionDoc.get();
+            document.getElementById('guardian-input').value = doc.exists && doc.data().guardianNote ? doc.data().guardianNote : '';
+          }
+
+          // Reset Day (delete all actions and notes for today)
+          document.getElementById('reset-day').onclick = async function() {
+            if (!confirm('Clear all of today\'s log?')) return;
+            // Delete all actions
+            const snap = await actionsCol.get();
+            const batch = db.batch();
+            snap.forEach(doc => batch.delete(doc.ref));
+            batch.delete(reflectionDoc);
+            await batch.commit();
+            loadActions();
+            loadReflection();
+            loadGuardianNote();
+          };
+
+          // Mood Chart
+          let moodChart;
+          function updateMoodChart(labels, beforeData, afterData) {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            if (moodChart) moodChart.destroy();
+            moodChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                labels: labels,
+                datasets: [
+                  {
+                    label: 'Before Mood',
+                    data: beforeData,
+                    backgroundColor: '#7ec4cf',
+                  },
+                  {
+                    label: 'After Mood',
+                    data: afterData,
+                    backgroundColor: '#f9c74f',
+                  }
+                ]
+              },
+              options: {
+                plugins: {
+                  legend: {
+                    display: true,
+                    labels: {
+                      font: { family: 'Comic Sans MS', size: 14 }
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    max: 5,
+                    title: {
+                      display: true,
+                      text: 'Mood Score',
+                      font: { family: 'Comic Sans MS', size: 14 }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Initial load
+          loadActions();
+          loadReflection();
+          loadGuardianNote();
+        });
+  </script>
+</body>
+</html>

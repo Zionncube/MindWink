@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World CRUD Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f6f8fc; color: #222; padding: 2rem; }
+    main { background: #fff; border-radius: 12px; max-width: 400px; margin: 2rem auto; padding: 2rem; box-shadow: 0 2px 12px #7ec4cf22; }
+    h1 { color: #7ec4cf; }
+    #display { font-size: 1.5rem; margin: 1rem 0; }
+    input { padding: 0.5rem; border-radius: 6px; border: 1px solid #ccc; width: 80%; }
+    button { background: #7ec4cf; color: #fff; border: none; border-radius: 6px; padding: 0.5rem 1rem; margin: 0.5rem 0.2rem; cursor: pointer; }
+    button:hover { background: #5baab7; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Hello World CRUD</h1>
+    <div id="display">Hello World</div>
+    <input id="input" type="text" placeholder="Type a new message...">
+    <br>
+    <button id="saveBtn">Save/Update</button>
+    <button id="deleteBtn">Delete</button>
+    <p style="font-size:0.9rem;color:#888;">This demo uses your browser's localStorage to simulate database CRUD.</p>
+  </main>
+  <script src="hello.js"></script>
+</body>
+</html>
