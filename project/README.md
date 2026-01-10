@@ -1,6 +1,6 @@
-# MindWink: Daily Alignment Page (Module 1 - Cloud Database CRUD)
+ MindWink: Daily Alignment Page (Module 1 - Cloud Database CRUD)
 
-## Overview
+ Overview
 MindWink is a child-centered learning application designed to help children understand cause and effect, emotional awareness, and personal growth through simple daily actions. This project demonstrates the first module: implementing cloud database CRUD (Create, Read, Update, Delete) operations using Firebase Firestore.
 
 On the "Focus" page, children (or guardians) can:
@@ -16,7 +16,7 @@ All data is stored per user, ensuring privacy. Each child only sees their own da
 
 All data is securely stored in Firebase, allowing for later analysis and visualization.
 
-## Purpose
+Purpose
 The purpose of this module is to:
 - Practice and demonstrate cloud database CRUD operations in a real-world, child-friendly application
 - Lay the foundation for future modules (data analysis, visualization, security, etc.)
@@ -24,10 +24,14 @@ The purpose of this module is to:
 
 - Demonstrate secure, ethical data handling for children
 
-## Software Demo Video
-[Demo Video Link](https://your-youtube-link-here)
 
-## Development Environment
+## Software Demo Video
+
+[![Watch the demo video](https://img.youtube.com/vi/Pu0dJ-mWMAY/hqdefault.jpg)](https://youtu.be/Pu0dJ-mWMAY)
+
+Click the image above or [watch on YouTube](https://youtu.be/Pu0dJ-mWMAY).
+
+ Development Environment
 - Visual Studio Code
 - Git & GitHub
 - JavaScript, HTML, CSS
@@ -35,25 +39,25 @@ The purpose of this module is to:
 - Firebase Authentication
 - Browser: Chrome/Edge/Firefox
 
-## Programming Language
+Programming Language
 - JavaScript (ES6)
 - HTML5
 - CSS3
 
-## Useful Websites
+ Useful Websites
 - [Firebase Docs](https://firebase.google.com/docs)
 - [MDN Web Docs](https://developer.mozilla.org/)
 - [Chart.js Docs](https://www.chartjs.org/docs/)
 - [W3Schools](https://www.w3schools.com/)
 - [GitHub Docs](https://docs.github.com/)
 
-## Security & Privacy
+ Security & Privacy
 
 MindWink uses Firebase Authentication to ensure each child’s data is private. Firestore security rules restrict access so users can only read and write their own data. Mood values are validated, and unauthenticated access is blocked for safety.
 
 Example Firestore rules:
 
-```
+
 rules_version = '2';
 service cloud.firestore {
 	match /databases/{database}/documents {
@@ -62,10 +66,3 @@ service cloud.firestore {
 		}
 	}
 }
-```
-
-This ensures ethical, secure handling of children’s data.
-
----
-
-Feel free to personalize this README and add your video link above!
