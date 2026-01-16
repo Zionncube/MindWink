@@ -153,16 +153,19 @@
             if (editingId) {
               // Update existing action
               await actionsCol.doc(editingId).update({ action: actionText, before: beforeMood, after: afterMood });
+              // --- CREATE or UPDATE an action ---
               editingId = null;
               document.getElementById('save-action').textContent = 'Save Action';
             } else {
               // Create new action
               await actionsCol.add({ action: actionText, before: beforeMood, after: afterMood, ts: Date.now() });
             }
+                  // --- UPDATE: Update existing action in Firestore ---
             document.getElementById('action-text').value = '';
             loadActions();
           };
 
+                  // --- CREATE: Add new action to Firestore ---
           // Load Actions
           async function loadActions() {
             const list = document.getElementById('actions-list');
@@ -170,6 +173,7 @@
             const snap = await actionsCol.orderBy('ts').get();
             let labels = [], beforeData = [], afterData = [];
             snap.forEach(doc => {
+              // --- READ: Load and display all actions for today ---
               const d = doc.data();
               labels.push(d.action);
               beforeData.push(d.before);
@@ -183,6 +187,7 @@
                 document.getElementById('action-text').value = d.action;
                 document.getElementById('before-mood').value = d.before;
                 document.getElementById('after-mood').value = d.after;
+                  // --- Edit button: Prepares form for UPDATE ---
                 editingId = doc.id;
                 document.getElementById('save-action').textContent = 'Update Action';
               };
@@ -194,6 +199,7 @@
                 await actionsCol.doc(doc.id).delete();
                 // If deleting the one being edited, reset form
                 if (editingId === doc.id) {
+                  // --- Delete button: DELETE an action from Firestore ---
                   editingId = null;
                   document.getElementById('action-text').value = '';
                   document.getElementById('save-action').textContent = 'Save Action';
@@ -213,28 +219,33 @@
             loadReflection();
           };
           async function loadReflection() {
+              // --- CREATE/UPDATE Reflection ---
             const doc = await reflectionDoc.get();
             document.getElementById('reflection-input').value = doc.exists && doc.data().reflection ? doc.data().reflection : '';
           }
 
           // Guardian Note CRUD
+              // --- READ Reflection ---
           document.getElementById('save-guardian-note').onclick = async function() {
             const note = document.getElementById('guardian-input').value;
             await reflectionDoc.set({ guardianNote: note }, { merge: true });
             loadGuardianNote();
           };
           async function loadGuardianNote() {
+              // --- CREATE/UPDATE Guardian Note ---
             const doc = await reflectionDoc.get();
             document.getElementById('guardian-input').value = doc.exists && doc.data().guardianNote ? doc.data().guardianNote : '';
           }
 
           // Reset Day (delete all actions and notes for today)
+              // --- READ Guardian Note ---
           document.getElementById('reset-day').onclick = async function() {
             if (!confirm('Clear all of today\'s log?')) return;
             // Delete all actions
             const snap = await actionsCol.get();
             const batch = db.batch();
             snap.forEach(doc => batch.delete(doc.ref));
+              // --- DELETE all actions and notes for today (RESET) ---
             batch.delete(reflectionDoc);
             await batch.commit();
             loadActions();
@@ -249,6 +260,7 @@
             if (moodChart) moodChart.destroy();
             moodChart = new Chart(ctx, {
               type: 'bar',
+              // --- Updates the mood chart visualization ---
               data: {
                 labels: labels,
                 datasets: [
@@ -295,4 +307,5 @@
         });
   </script>
 </body>
+              // --- Load all data on page load ---
 </html>

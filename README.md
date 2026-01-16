@@ -1,28 +1,77 @@
- MindWink: Daily Alignment Page (Module 1 - Cloud Database CRUD)
+# MindWink: Daily Alignment Page (Module 1 - Cloud Database CRUD)
 
- Overview
-MindWink is a child-centered learning application designed to help children understand cause and effect, emotional awareness, and personal growth through simple daily actions. This project demonstrates the first module: implementing cloud database CRUD (Create, Read, Update, Delete) operations using Firebase Firestore.
+> MindWink is a child-centered learning application designed to help children understand cause and effect, emotional awareness, and personal growth through simple daily actions. This project demonstrates the first module: implementing cloud database CRUD (Create, Read, Update, Delete) operations using Firebase Firestore through a real-world web application.
 
-On the "Focus" page, children (or guardians) can:
+## Project Overview
+
+
+MindWink is built as a real-world web application (HTML, CSS, JS) where children and guardians interact with the Focus page to:
 - Enter daily actions (e.g., "I made my bed")
 - Select their mood before and after each action (using emojis)
 - Reflect on how actions influence feelings
 - See their actions and mood changes visualized in a chart
-
 - Edit or delete any action entry for accurate records
 - Submit daily reflections and guardian notes
 
-All data is stored per user, ensuring privacy. Each child only sees their own data, protected by Firebase Authentication and Firestore security rules.
+All data is stored per user, ensuring privacy. Each child only sees their own data, protected by Firebase Authentication and Firestore security rules. All data is securely stored in Firebase, allowing for later analysis and visualization.
 
-All data is securely stored in Firebase, allowing for later analysis and visualization.
+## Features
 
-Purpose
-The purpose of this module is to:
-- Practice and demonstrate cloud database CRUD operations in a real-world, child-friendly application
-- Lay the foundation for future modules (data analysis, visualization, security, etc.)
-- Show how children interact with the app and how their data is stored and retrieved
+- Cloud database creation (Firestore)
+- CRUD operations (Create, Read, Update, Delete)
+- User authentication (concept, per-user data)
+- Two related collections: `users` and `actions`
 
-- Demonstrate secure, ethical data handling for children
+## Technologies Used
+
+- HTML, CSS, JavaScript
+- Firebase Firestore
+- Firebase Authentication
+- Git & GitHub
+
+## Repository Structure
+
+
+```
+project/
+├── index.html
+├── about.html
+├── attribution.html
+├── focus.html
+├── form.html
+├── siteplan.html
+├── strategies.html
+├── styles.css
+├── thankyou.html
+├── images/
+├── scripts/
+│   └── main.js
+├── styles/
+│   ├── large.css
+│   ├── normalize.css
+│   └── styles.css
+```
+
+> **Never upload your `serviceAccountKey.json` file.**
+
+## How to Run
+**To verify that data is being stored in the database, open the Firebase Firestore browser console while using the app. You will see new documents and updates appear live as you interact with MindWink. This process is also demonstrated in the video submission.**
+
+### 1. Clone the Repository
+1. Click the green "Code" button and clone this repository to your local machine.
+
+### 2. Set Up Your Own Firebase Firestore Backend
+1. Go to [Firebase Console](https://console.firebase.google.com/) and create a new project.
+2. Enable Firestore Database and Authentication (email/password or Google sign-in recommended).
+3. Add a new web app in Firebase and copy the configuration snippet.
+4. Replace the Firebase config in your web app (`project/scripts/main.js` or similar) with your own credentials.
+5. (Optional) Download your `serviceAccountKey.json` for Python backend demo and place it in the project root (do NOT upload to GitHub).
+
+### 3. Running the Real MindWink Web App (Recommended for Users & Video Demo)
+1. Open the `project/` folder.
+2. Double-click `index.html` to launch the app in your browser.
+3. Use the Focus page to add, edit, and view actions and moods.
+4. All data is stored in your own Firebase Firestore and protected by authentication.
 
 
 ## Software Demo Video
@@ -31,38 +80,47 @@ The purpose of this module is to:
 
 Click the image above or [watch on YouTube](https://youtu.be/Pu0dJ-mWMAY).
 
- Development Environment
-- Visual Studio Code
-- Git & GitHub
-- JavaScript, HTML, CSS
-- Firebase Firestore
-- Firebase Authentication
-- Browser: Chrome/Edge/Firefox
+## Time Log
 
-Programming Language
-- JavaScript (ES6)
-- HTML5
-- CSS3
+```
+Monday – 3 hrs: Planning & schema design
+Tuesday – 4 hrs: Firebase setup & authentication
+Wednesday – 4 hrs: CRUD implementation
+Thursday – 3 hrs: Testing & debugging
+Friday – 3 hrs: Documentation & README
+Saturday – 3 hrs: Video recording & GitHub publishing
+```
+Total: **20 hours**
 
- Useful Websites
-- [Firebase Docs](https://firebase.google.com/docs)
-- [MDN Web Docs](https://developer.mozilla.org/)
-- [Chart.js Docs](https://www.chartjs.org/docs/)
-- [W3Schools](https://www.w3schools.com/)
-- [GitHub Docs](https://docs.github.com/)
+## Reflection / Learning Strategies
 
- Security & Privacy
+The most effective learning strategy in this module was breaking the work into small, manageable steps and following official documentation. Incremental testing helped reduce errors. Initially, Firebase configuration was challenging, but persistence and structured troubleshooting improved my understanding. In the next module, I will prototype earlier and test more frequently.
+
+## Security & Privacy
 
 MindWink uses Firebase Authentication to ensure each child’s data is private. Firestore security rules restrict access so users can only read and write their own data. Mood values are validated, and unauthenticated access is blocked for safety.
 
 Example Firestore rules:
 
-
+```
 rules_version = '2';
 service cloud.firestore {
 	match /databases/{database}/documents {
-		match /days/{userId}/{date}/{document=**} {
+		match /users/{userId} {
 			allow read, write: if request.auth != null && request.auth.uid == userId;
+		}
+		match /actions/{actionId} {
+			allow read, write: if request.auth != null;
 		}
 	}
 }
+```
+
+## .gitignore (Required)
+
+```
+serviceAccountKey.json
+```
+
+**Never upload your Firebase service account key.**
+
