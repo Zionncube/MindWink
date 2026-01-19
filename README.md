@@ -76,7 +76,19 @@ Software Demo Video
 
 Cloud Video (Final)
 
-Watch the cloud video (final): https://byupw.instructure.com/files/folder/users_25582?preview=5327126
+Watch the cloud video (final): Reflection / Learning Strategies
+
+The most effective learning strategy in this module was breaking the work into small, manageable steps and following official documentation. Incremental testing helped reduce errors. Initially, Firebase configuration was challenging, but persistence and structured troubleshooting improved my understanding. In the next module, I will prototype earlier and test more frequently.
+
+Reflection / Learning Strategies
+
+The most effective learning strategy in this module was breaking the work into small, manageable steps and following official documentation. Incremental testing helped reduce errors. Initially, Firebase configuration was challenging, but persistence and structured troubleshooting improved my understanding. In the next module, I will prototype earlier and test more frequently.
+
+Reflection / Learning Strategies
+
+The most effective learning strategy in this module was breaking the work into small, manageable steps and following official documentation. Incremental testing helped reduce errors. Initially, Firebase configuration was challenging, but persistence and structured troubleshooting improved my understanding. In the next module, I will prototype earlier and test more frequently.
+
+watch thi new demo video: https://youtu.be/rbmN3yo63BE
 
 Watch the demo video: https://youtu.be/Pu0dJ-mWMAY
 
